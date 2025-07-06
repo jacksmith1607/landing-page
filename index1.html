@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jack Smith</title>
+    <!-- Link to Font Awesome for the social media and PayPal icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 50px 0;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .social-icons {
+            margin-top: 30px;
+        }
+
+        .social-icons a {
+            margin: 0 15px;
+            font-size: 40px;
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #0077ff; /* Hover effect */
+        }
+
+        /* Pop-up style */
+        .popup {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+            z-index: 1000;
+        }
+
+        .popup button {
+            background-color: #0077ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .popup button:hover {
+            background-color: #005bb5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <h1>Jack Smith</h1>
+    </header>
+
+    <!-- Social Icons Section -->
+    <div class="social-icons">
+        <a href="https://www.facebook.com/jacklsmith1607" target="_blank" title="Facebook">
+            <i class="fab fa-facebook"></i>
+        </a>
+        <a href="https://www.instagram.com/jacksmith1607" target="_blank" title="Instagram">
+            <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.snapchat.com/add/jacksmith1607" target="_blank" title="Snapchat">
+            <i class="fab fa-snapchat"></i>
+        </a>
+        <a href="https://www.paypal.com/paypalme/jacksmith1607" target="_blank" title="PayPal">
+            <i class="fab fa-paypal"></i>
+        </a>
+        <!-- Mailto Link, but prevent default behavior on click -->
+        <a href="javascript:void(0);" id="email-link" title="Email" onclick="showPopup(event);">
+            <i class="fas fa-envelope"></i>
+        </a>
+    </div>
+
+    <!-- Email Pop-Up -->
+    <div id="email-popup" class="popup">
+        <p>If the email client doesn't open, you can click the link below to send an email:</p>
+        <p><strong><a href="mailto:jack@jacklsmith.co.uk" id="email-link-popup" target="_blank">jack@jacklsmith.co.uk</a></strong></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        // Function to show the pop-up and prevent the default mailto behavior
+        function showPopup(event) {
+            event.preventDefault(); // Prevent default mailto action
+            var emailPopup = document.getElementById("email-popup");
+            emailPopup.style.display = "block"; // Show the pop-up
+        }
+
+        // Function to close the pop-up
+        function closePopup() {
+            var emailPopup = document.getElementById("email-popup");
+            emailPopup.style.display = "none"; // Hide the pop-up
+        }
+    </script>
+
+</body>
+</html>
