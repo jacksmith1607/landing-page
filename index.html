@@ -645,7 +645,7 @@
         </div>
 
         <div class="modal-buttons">
-          <button type="submit" class="btn btn-primary" aria-label="Send your message">
+          <button type="submit" class="btn btn-primary" aria-label="Send your message" id="submitBtn">
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
               <path d="M2.01 6.47L12 13.17l9.98-6.69v-.01L12 20 2.01 6.47z"/>
             </svg>
@@ -656,6 +656,7 @@
             class="btn btn-primary"
             aria-label="Close email modal"
             onclick="closeEmailModal()"
+            id="closeBtn"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
               <path d="M18 6L6 18M6 6l12 12"/>
@@ -668,6 +669,7 @@
         Or email me directly at:
         <a href="mailto:jack@jacklsmith.co.uk" tabindex="0">jack@jacklsmith.co.uk</a>
       </p>
+      <p id="formMessage" style="color:#6ef26e; font-weight: 600; margin-top: 14px; display: none;"></p>
     </div>
   </div>
 
@@ -706,6 +708,7 @@
 
       document.querySelector(".social-icon.email").setAttribute("aria-expanded", "true");
       modal.querySelector("#name").focus();
+      clearFormMessages();
     }
 
     // Close Email Modal
@@ -717,8 +720,16 @@
 
       document.querySelector(".social-icon.email").setAttribute("aria-expanded", "false");
       document.querySelector(".social-icon.email").focus();
-      clearFormErrors();
+      clearFormMessages();
       document.getElementById("contactForm").reset();
+      clearFormErrors();
+      enableSubmit();
+    }
+
+    function clearFormMessages() {
+      const msg = document.getElementById("formMessage");
+      msg.style.display = "none";
+      msg.textContent = "";
     }
 
     function clearFormErrors() {
@@ -732,11 +743,26 @@
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    // Form submit handler
+    // Disable & enable submit button to prevent duplicates
+    function disableSubmit() {
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.style.cursor = "not-allowed";
+      btn.style.opacity = "0.6";
+    }
+    function enableSubmit() {
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = false;
+      btn.style.cursor = "pointer";
+      btn.style.opacity = "1";
+    }
+
+    // Form submit handler with fetch to Google Apps Script
     document.getElementById("contactForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
       clearFormErrors();
+      clearFormMessages();
 
       const name = this.name.value.trim();
       const email = this.email.value.trim();
@@ -764,13 +790,42 @@
 
       if (!valid) return;
 
-      // TODO: Add backend integration to send this data somewhere
+      disableSubmit();
 
-      alert(`Thanks, ${name}! Your message has been received.`);
+      // POST to Google Apps Script URL
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbzJW7HU2RB_I4fBG8QtXbvNVTciPvLJwcAOlByEjXUSTryoPMBgnSLj3tZLVeW9neyX/exec';
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('message', message);
 
-      // Reset form & close modal
-      this.reset();
-      closeEmailModal();
+      fetch(scriptURL, {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => {
+          if (response.ok) {
+            // Success
+            const msg = document.getElementById("formMessage");
+            msg.style.color = "#6ef26e";
+            msg.textContent = "Thanks, your message has been sent!";
+            msg.style.display = "block";
+            this.reset();
+            setTimeout(() => {
+              closeEmailModal();
+            }, 1800);
+          } else {
+            throw new Error('Network response was not OK');
+          }
+        })
+        .catch(error => {
+          const msg = document.getElementById("formMessage");
+          msg.style.color = "#f44336";
+          msg.textContent = "Sorry, there was a problem sending your message. Please try again later.";
+          msg.style.display = "block";
+          enableSubmit();
+          console.error(error);
+        });
     });
 
     // Close modal when clicking outside modal content
